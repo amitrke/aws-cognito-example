@@ -10,6 +10,18 @@ variable "webapp_files" {
   default     = "../webapp/dist/webapp/browser"
 }
 
+variable "domain_name" {
+  description = "The domain name for the webapp"
+  type        = string
+}
+
+variable "webapp_subdomain" {
+  description = "The subdomain for the webapp"
+  type        = string
+  default     = "app"
+  
+}
+
 #Cognito
 
 variable "cognito_google_client_id" {
@@ -26,4 +38,9 @@ variable "cognito_domain" {
   description = "Cognito Domain"
   type        = string
   default     = "amrke-myapp"
+}
+
+variable stage_name {
+  default = "prod"
+  type    = string
 }

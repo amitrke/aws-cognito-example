@@ -130,3 +130,21 @@ resource "aws_cloudfront_distribution" "this" {
 output "cloudfront_domain_name" {
   value = aws_cloudfront_distribution.this.domain_name
 }
+
+# Route53
+resource "aws_route53_zone" "this" {
+  name = var.domain_name
+}
+
+# Create a record for the subdomain to point to the Cloudfront distribution
+resource "aws_route53_record" "this" {
+  zone_id = aws_route53_zone.this.zone_id
+  name    = var.webapp_subdomain
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.this.domain_name
+    zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
