@@ -10,6 +10,10 @@ An application that uses AWS Cognito for Authentication, API Gateway, Lambda and
 ## Steps to run the application
 
 ### Clone the repository
+```bash
+git clone <repo-url>
+```
+
 ### Build the application
 ```bash
 cd webapp
