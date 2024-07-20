@@ -4,6 +4,12 @@ variable "app_name" {
   default     = "myapp"
 }
 
+variable "webapp_files" {
+  description = "The path to the webapp files"
+  type        = string
+  default     = "../webapp/dist/webapp/browser"
+}
+
 #Cognito
 
 variable "cognito_google_client_id" {
