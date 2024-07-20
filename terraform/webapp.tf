@@ -3,17 +3,6 @@ resource "aws_s3_bucket" "this" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_website_configuration" "this" {
-    bucket = aws_s3_bucket.this.bucket
-    index_document {
-        suffix = "index.html"
-    }
-    error_document {
-        key = "index.html"
-    }
-}
-
-
 resource "aws_s3_bucket_ownership_controls" "this" {
   bucket = aws_s3_bucket.this.id
   rule {
