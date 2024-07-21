@@ -47,7 +47,7 @@ Read the Cloudfront URL from the terraform output and access the application.
 
 ### Cleanup
 ```bash
-terraform destroy -auto-approve -var cognito_google_client_id="XXXXXXXX.apps.googleusercontent.com" -var cognito_google_client_secret="XXXXXXXXXX"
+terraform destroy --var-file=terraform.tfvars -auto-approve
 ```
 
 ## TODO
