@@ -7,6 +7,8 @@ An application that uses AWS Cognito for Authentication, API Gateway, Lambda and
 - Node.js: Version 20 or higher, this is required to build the Angular application.
 - Google Account for OAuth: Create a project in Google Cloud Console and enable Google+ API. Create OAuth 2.0 Client ID and download the credentials.
 - Domain Name: A domain name that you own. This is required for the website to be hosted on Cloudfront and for Google OAuth.
+- Route53 Hosted Zone: A hosted zone in Route53 for the domain name.
+- AWS Certificate Manager: A certificate for the domain name.
 
 ## Steps to run the application
 
@@ -30,6 +32,7 @@ Create a file named terraform.tfvars in the terraform directory with the followi
 domain_name = "example.com"
 cognito_google_client_id = "XXXXXXXX.apps.googleusercontent.com"
 cognito_google_client_secret = "XXXXXXXX
+certificate_arn = "arn:aws:acm:us-east-1:XXXXXXXX:certificate/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ```
 
 ### Deploy the application

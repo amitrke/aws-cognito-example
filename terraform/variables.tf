@@ -18,8 +18,18 @@ variable "domain_name" {
 variable "webapp_subdomain" {
   description = "The subdomain for the webapp"
   type        = string
-  default     = "app"
-  
+  default     = "app"  
+}
+
+variable "api_subdomain" {
+  description = "The subdomain for the API"
+  type        = string
+  default     = "api"
+}
+
+variable "certificate_arn" {
+  description = "The ARN of the certificate for the domain"
+  type        = string
 }
 
 #Cognito
