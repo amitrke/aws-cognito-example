@@ -22,3 +22,15 @@ variable "lambda_arn" {
     type = string
     description = "The ARN of the Lambda function"
 }
+
+variable "authorization" {
+    type = string
+    description = "The authorization type"
+    default = "NONE"
+}
+
+variable "authorizer_id" {
+    type = string
+    description = "The ID of the authorizer"
+    default = ""
+}

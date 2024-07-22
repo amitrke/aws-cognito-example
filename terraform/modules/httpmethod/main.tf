@@ -8,7 +8,8 @@ resource "aws_api_gateway_method" "this" {
   rest_api_id   = var.apigw_id
   resource_id   = aws_api_gateway_resource.this.id
   http_method   = var.http_method
-  authorization = "NONE"
+  authorization = var.authorization
+  authorizer_id = var.authorizer_id
 }
 
 resource "aws_api_gateway_integration" "this" {

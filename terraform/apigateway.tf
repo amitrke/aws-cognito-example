@@ -2,6 +2,15 @@ resource "aws_api_gateway_rest_api" "this" {
   name = var.app_name
 }
 
+# Cognito Authorizer
+resource "aws_api_gateway_authorizer" "this" {
+  name                   = "${var.app_name}-authorizer"
+  rest_api_id            = aws_api_gateway_rest_api.this.id
+  type                   = "COGNITO_USER_POOLS"
+  provider_arns          = [aws_cognito_user_pool.this.arn]
+  identity_source        = "method.request.header.Authorization"
+}
+
 module "hello1" {
   source = "./modules/httpmethod"
   apigw_id = aws_api_gateway_rest_api.this.id
@@ -9,6 +18,8 @@ module "hello1" {
   path = "hello1"
   http_method = "POST"
   lambda_arn = aws_lambda_function.lambda_hello1.invoke_arn
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.this.id
 }
 
 resource "aws_lambda_permission" "hello1" {
@@ -24,6 +35,12 @@ resource "aws_api_gateway_deployment" "this" {
 
   triggers = {
     redeployment = sha1(jsonencode(module.hello1))
+    #Redeploy every time
+    #redeployment = timestamp()
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   depends_on = [
