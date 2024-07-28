@@ -11,8 +11,17 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   #supported_identity_providers         = ["COGNITO", "Google"]
-  callback_urls                        = ["https://your-redirect-url.com/callback"]
+  callback_urls                        = ["https://app.subnext.com/login"]
   logout_urls                          = ["https://your-redirect-url.com/signout"]
+
+  write_attributes = [
+    "email",
+    "profile",
+    "name",
+    "given_name",
+    "family_name",
+    "picture"
+  ]
 }
 
 resource "aws_cognito_identity_provider" "google" {
@@ -23,6 +32,17 @@ resource "aws_cognito_identity_provider" "google" {
     client_id        = var.cognito_google_client_id
     client_secret    = var.cognito_google_client_secret
     authorize_scopes = "email profile openid"
+  }
+
+  attribute_mapping = {
+    email    = "email"
+    email_verified = "email_verified"
+    username = "sub"
+    name     = "name"
+    given_name = "given_name"
+    family_name = "family_name"
+    picture = "picture"
+    locale = "locale"
   }
 }
 
@@ -46,4 +66,16 @@ resource "aws_cognito_identity_pool" "this" {
     provider_name           = "cognito-idp.${var.region}.amazonaws.com/${aws_cognito_user_pool.this.id}"
     server_side_token_check = false
   }
+}
+
+output "user_pool_id" {
+  value = aws_cognito_user_pool.this.id
+}
+
+output "user_pool_client_id" {
+  value = aws_cognito_user_pool_client.client.id
+}
+
+output "identity_pool_id" {
+  value = aws_cognito_identity_pool.this.id
 }
