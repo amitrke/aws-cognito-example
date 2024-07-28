@@ -97,7 +97,7 @@ resource "aws_cloudfront_distribution" "this" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-
+  
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
@@ -123,6 +123,12 @@ resource "aws_cloudfront_distribution" "this" {
     ssl_support_method = "sni-only"
   }
 
+  custom_error_response {
+    error_code = 404
+    response_code = 200
+    response_page_path = "/index.html"
+  }
+  
   aliases = ["${var.webapp_subdomain}.${var.domain_name}"]
 
   tags = {
