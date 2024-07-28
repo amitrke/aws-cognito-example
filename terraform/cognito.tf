@@ -2,17 +2,52 @@
 
 resource "aws_cognito_user_pool" "this" {
   name = "${var.app_name}-user-pool"
+
+  schema {
+    name = "email"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "name"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "given_name"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "family_name"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "picture"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
 }
 
 resource "aws_cognito_user_pool_client" "client" {
   name                                 = "${var.app_name}-user-pool-client"
   user_pool_id                         = aws_cognito_user_pool.this.id
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
-  #supported_identity_providers         = ["COGNITO", "Google"]
-  callback_urls                        = ["https://app.subnext.com/login"]
-  logout_urls                          = ["https://your-redirect-url.com/signout"]
+  supported_identity_providers         = ["COGNITO", "Google"]
+  callback_urls                        = ["https://app.subnext.com/"]
+  logout_urls                          = ["https://app.subnext.com/"]
 
   write_attributes = [
     "email",
