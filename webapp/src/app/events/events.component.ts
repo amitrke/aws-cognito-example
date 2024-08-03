@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EventsService } from '../events.service';
+import { Event, EventsService } from '../events.service';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -40,14 +40,7 @@ export class EventsComponent {
   }
 
   onSubmit() {
-    const event = {
-      name: this.eventForm.value.name || '',
-      date: this.eventForm.value.date || '',
-      time: this.eventForm.value.time || '',
-      location: this.eventForm.value.location || '',
-      description: this.eventForm.value.description || ''
-    };
-
+    const event = this.eventTransform();
     this.eventsService.saveEvent(event, this.apiToken).subscribe(
       response => {
         console.log(response);
@@ -57,6 +50,31 @@ export class EventsComponent {
       }
     );
     console.log(this.eventForm.value);
+  }
+
+  eventTransform(): Event {
+    //OCBC#2024-08-03T07:00:00.000Z#6
+    let parsedDate = new Date(this.eventForm.value.date || '');
+    //Format date to YYYYMMDD
+    let dateValue = parsedDate.toISOString();
+    dateValue = dateValue.split('T')[0].replace(/-/g, '');
+    let timeValue = this.eventForm.value.time || '';
+    //Current format is 6:30 AM convert to 24 hour format
+    let hour = parseInt(timeValue.split(':')[0]);
+    let minute = parseInt(timeValue.split(':')[1].split(' ')[0]);
+    let ampm = timeValue.split(' ')[1];
+    if (ampm === 'PM') {
+      hour += 12;
+    }
+    timeValue = hour + ':' + minute;
+
+    return {
+      name: this.eventForm.value.name || '',
+      date: dateValue,
+      time: timeValue,
+      location: this.eventForm.value.location || '',
+      description: this.eventForm.value.description || ''
+    };
   }
 
 }
