@@ -26,8 +26,13 @@ def lambda_handler(event, context):
     # Put the event data into the table
     db_row = {
         'id': id,
-        'time': time,
-        'description': description
+        'data': {
+            'date': date,
+            'time': time,
+            'location': location,
+            'description': description,
+            'name': eventBodyJSON['name']
+        }
     }
     table.put_item(Item=db_row)
 

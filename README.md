@@ -51,5 +51,5 @@ terraform destroy --var-file=terraform.tfvars -auto-approve
 ```
 
 ## TODO
-- Maintain terraform state in S3 and DynamoDB https://developer.hashicorp.com/terraform/language/settings/backends/s3
+- DynamoDB events table time to live configuration.
 - Check if there is a better way to upload the files to S3 instead of uploading first the html files then the js files and finally the css files.
