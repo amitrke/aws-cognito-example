@@ -65,3 +65,27 @@ resource "aws_lambda_function" "lambda_hello1" {
     }
   }
 }
+
+# eventAdmin Lambda
+data "archive_file" "eventAdmin" {
+  type        = "zip"
+  source_file = "../restapi/eventAdmin.py"
+  output_path = "eventAdmin_function_payload.zip"
+}
+
+resource "aws_lambda_function" "lambda_eventAdmin" {
+  filename      = "eventAdmin_function_payload.zip"
+  function_name = "${var.app_name}-eventAdmin"
+  role          = aws_iam_role.lambda_execution_role.arn
+  handler       = "eventAdmin.lambda_handler"
+
+  source_code_hash = data.archive_file.eventAdmin.output_base64sha256
+
+  runtime = "python3.8"
+
+  environment {
+    variables = {
+      EVENT_TABLE = aws_dynamodb_table.this.name
+    }
+  }
+}
