@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { Amplify } from 'aws-amplify';
 import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
 import awsconfig from './aws-exports';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 Amplify.configure(awsconfig);
 
@@ -18,7 +19,9 @@ Amplify.configure(awsconfig);
     AppRoutingModule,
     AmplifyAuthenticatorModule
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
