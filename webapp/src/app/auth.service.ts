@@ -21,7 +21,25 @@ export class AuthService {
     return cognitoToken?.idToken?.payload['name']?.toString();
   }
 
+  async getIDToken(): Promise<string | undefined> {
+    return (await fetchAuthSession()).tokens?.idToken?.toString();
+  }
+
+  async getUserInfo(): Promise<User | undefined> {
+    return (await fetchAuthSession()).tokens?.idToken?.payload as User;
+  }
+
   signOut() {
     signOut();
   }
+}
+
+export type User = {
+  username: string,
+  email: string,
+  name: string,
+  family_name: string,
+  given_name: string,
+  email_verified: boolean,
+  sub: string
 }

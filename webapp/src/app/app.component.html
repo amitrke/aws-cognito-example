@@ -1,3 +1,25 @@
+<mat-toolbar>
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>Events App</span>
+  <span class="example-spacer"></span>
+  
+  <!-- If logged in then show user first name -->
+  <span *ngIf="userInfo">{{ userInfo.name }}</span>
+
+  <!-- If logged in then show logout button -->
+  <button *ngIf="userInfo" mat-icon-button class="example-icon" aria-label="Example icon-button with share icon"
+    (click)="signOut()">
+    <mat-icon>logout</mat-icon>
+  </button>
+
+  <!-- If not logged in then show login button -->
+  <button *ngIf="!userInfo" mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+    <mat-icon>login</mat-icon>
+  </button>
+</mat-toolbar>
+
 <amplify-authenticator
   [socialProviders]="['google']"
   >
@@ -6,9 +28,10 @@
     let-user="user"
     let-signOut="signOut"
   >
-    <h1>Welcome {{ user.username }}!</h1>
-    <button (click)="signOut()">Sign Out</button>
   </ng-template>
 </amplify-authenticator>
+
+<!-- If logged in then show form -->
+<app-events *ngIf="userInfo"></app-events>
 
 <router-outlet />

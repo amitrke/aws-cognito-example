@@ -1,0 +1,37 @@
+<!-- 
+ Angular Material form that has the following fields 
+    1. Event Name
+    2. Event Date
+    3. Event Location
+    4. Event Description
+    5. Event Time
+ -->
+
+<mat-card>
+    <mat-card-title>Create Event</mat-card-title>
+    <mat-card-content>
+        <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+            <mat-form-field>
+                <input matInput placeholder="Event Name" formControlName="name">
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput [matDatepicker]="picker" placeholder="Event Date" formControlName="date">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput placeholder="Event Location" formControlName="location">
+            </mat-form-field>
+            <mat-form-field>
+                <textarea matInput placeholder="Event Description" formControlName="description"></textarea>
+            </mat-form-field>
+            <!-- Time picker dropdown with time from the list timeList -->
+            <mat-form-field>
+                <mat-select placeholder="Event Time" formControlName="time">
+                    <mat-option *ngFor="let time of timeList" [value]="time">{{time}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-raised-button type="submit">Create Event</button>
+        </form>
+    </mat-card-content>
+</mat-card>

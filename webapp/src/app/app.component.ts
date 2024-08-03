@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Hub } from 'aws-amplify/utils';
-import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
-import { AuthService } from './auth.service';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { AuthService, User } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,11 +9,16 @@ import { AuthService } from './auth.service';
 })
 export class AppComponent {
   title = 'webapp';
+  userInfo: User | undefined;
 
   constructor(private authService: AuthService) {}
 
   async ngOnInit() {
-    const session = await fetchAuthSession();
-    console.log("id token", session.tokens?.idToken?.toString());
+    const userInfo = await this.authService.getUserInfo();
+    this.userInfo = userInfo;
+  }
+
+  async signOut() {
+    await this.authService.signOut();
   }
 }
