@@ -48,6 +48,16 @@ module "create_event" {
   authorizer_id = aws_api_gateway_authorizer.this.id
 }
 
+module "get_events" {
+  source = "./modules/httpmethod"
+  apigw_id = aws_api_gateway_rest_api.this.id
+  apigw_resource_id = module.path_events.id
+  http_method = "GET"
+  lambda_arn = aws_lambda_function.lambda_eventUser.invoke_arn
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.this.id
+}
+
 resource "aws_lambda_permission" "hello1" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
@@ -60,6 +70,14 @@ resource "aws_lambda_permission" "create_event" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_eventAdmin.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${replace(aws_api_gateway_deployment.this.execution_arn, var.stage_name, "")}*/*"
+}
+
+resource "aws_lambda_permission" "get_events" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_eventUser.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${replace(aws_api_gateway_deployment.this.execution_arn, var.stage_name, "")}*/*"
 }
@@ -79,6 +97,7 @@ resource "aws_api_gateway_deployment" "this" {
 
   depends_on = [
     module.create_event,
+    module.get_events,
     module.hello1
   ]
 }
