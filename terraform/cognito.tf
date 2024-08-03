@@ -4,38 +4,38 @@ resource "aws_cognito_user_pool" "this" {
   name = "${var.app_name}-user-pool"
 
   schema {
-    name = "email"
+    name                = "email"
     attribute_data_type = "String"
-    mutable = true
-    required = true
+    mutable             = true
+    required            = true
   }
 
   schema {
-    name = "name"
+    name                = "name"
     attribute_data_type = "String"
-    mutable = true
-    required = true
+    mutable             = true
+    required            = true
   }
 
   schema {
-    name = "given_name"
+    name                = "given_name"
     attribute_data_type = "String"
-    mutable = true
-    required = true
+    mutable             = true
+    required            = true
   }
 
   schema {
-    name = "family_name"
+    name                = "family_name"
     attribute_data_type = "String"
-    mutable = true
-    required = true
+    mutable             = true
+    required            = true
   }
 
   schema {
-    name = "picture"
+    name                = "picture"
     attribute_data_type = "String"
-    mutable = true
-    required = true
+    mutable             = true
+    required            = true
   }
 }
 
@@ -46,8 +46,8 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   supported_identity_providers         = ["COGNITO", "Google"]
-  callback_urls                        = ["https://app.subnext.com/"]
-  logout_urls                          = ["https://app.subnext.com/"]
+  callback_urls                        = ["https://${var.webapp_subdomain}.${var.domain_name}"]
+  logout_urls                          = ["http://${var.webapp_subdomain}.${var.domain_name}"]
 
   write_attributes = [
     "email",
@@ -70,14 +70,18 @@ resource "aws_cognito_identity_provider" "google" {
   }
 
   attribute_mapping = {
-    email    = "email"
+    email          = "email"
     email_verified = "email_verified"
-    username = "sub"
-    name     = "name"
-    given_name = "given_name"
-    family_name = "family_name"
-    picture = "picture"
-    locale = "locale"
+    username       = "sub"
+    name           = "name"
+    given_name     = "given_name"
+    family_name    = "family_name"
+    picture        = "picture"
+    locale         = "locale"
+  }
+
+  lifecycle {
+    ignore_changes = [provider_details]
   }
 }
 
@@ -89,7 +93,7 @@ resource "aws_cognito_user_pool_domain" "this" {
 # Identity Pool that allows only Google Sign-In
 
 resource "aws_cognito_identity_pool" "this" {
-  identity_pool_name = "${var.app_name}-identity-pool"
+  identity_pool_name               = "${var.app_name}-identity-pool"
   allow_unauthenticated_identities = false
 
   supported_login_providers = {
