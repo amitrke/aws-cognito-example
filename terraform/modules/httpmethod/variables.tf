@@ -8,11 +8,6 @@ variable "apigw_resource_id" {
     description = "The ID of the API Gateway resource"
 }
 
-variable "path" {
-    type = string
-    description = "The path"
-}
-
 variable "http_method" {
     type = string
     description = "The HTTP method"

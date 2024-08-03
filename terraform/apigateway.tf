@@ -11,13 +11,37 @@ resource "aws_api_gateway_authorizer" "this" {
   identity_source        = "method.request.header.Authorization"
 }
 
+#Create path /hello1
+resource "aws_api_gateway_resource" "path_hello1" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
+  path_part   = "hello1"
+}
+
 module "hello1" {
   source = "./modules/httpmethod"
   apigw_id = aws_api_gateway_rest_api.this.id
-  apigw_resource_id = aws_api_gateway_rest_api.this.root_resource_id
-  path = "hello1"
+  apigw_resource_id = aws_api_gateway_resource.path_hello1.id
   http_method = "POST"
   lambda_arn = aws_lambda_function.lambda_hello1.invoke_arn
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.this.id
+}
+
+# Create path /event
+resource "aws_api_gateway_resource" "path_event" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
+  path_part   = "event"
+}
+
+# Create event resource
+module "create_event" {
+  source = "./modules/httpmethod"
+  apigw_id = aws_api_gateway_rest_api.this.id
+  apigw_resource_id = aws_api_gateway_resource.path_event.id
+  http_method = "POST"
+  lambda_arn = aws_lambda_function.lambda_eventAdmin.invoke_arn
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.this.id
 }
@@ -30,11 +54,19 @@ resource "aws_lambda_permission" "hello1" {
   source_arn    = "${replace(aws_api_gateway_deployment.this.execution_arn, var.stage_name, "")}*/*"
 }
 
+resource "aws_lambda_permission" "create_event" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_eventAdmin.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${replace(aws_api_gateway_deployment.this.execution_arn, var.stage_name, "")}*/*"
+}
+
 resource "aws_api_gateway_deployment" "this" {
   rest_api_id = aws_api_gateway_rest_api.this.id
 
   triggers = {
-    redeployment = sha1(jsonencode(module.hello1))
+    redeployment = md5(file("apigateway.tf"))
     #Redeploy every time
     #redeployment = timestamp()
   }
@@ -44,6 +76,7 @@ resource "aws_api_gateway_deployment" "this" {
   }
 
   depends_on = [
+    module.create_event,
     module.hello1
   ]
 }
