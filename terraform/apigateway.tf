@@ -11,35 +11,37 @@ resource "aws_api_gateway_authorizer" "this" {
   identity_source        = "method.request.header.Authorization"
 }
 
-#Create path /hello1
-resource "aws_api_gateway_resource" "path_hello1" {
-  rest_api_id = aws_api_gateway_rest_api.this.id
-  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
-  path_part   = "hello1"
+# Create path hello
+module "path_hello" {
+  source = "./modules/pathresource"
+  apigw_id = aws_api_gateway_rest_api.this.id
+  apigw_resource_id = aws_api_gateway_rest_api.this.root_resource_id
+  path = "hello"
 }
 
 module "hello1" {
   source = "./modules/httpmethod"
   apigw_id = aws_api_gateway_rest_api.this.id
-  apigw_resource_id = aws_api_gateway_resource.path_hello1.id
+  apigw_resource_id = module.path_hello.id
   http_method = "POST"
   lambda_arn = aws_lambda_function.lambda_hello1.invoke_arn
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.this.id
 }
 
-# Create path /event
-resource "aws_api_gateway_resource" "path_event" {
-  rest_api_id = aws_api_gateway_rest_api.this.id
-  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
-  path_part   = "event"
+# Create path events
+module "path_events" {
+  source = "./modules/pathresource"
+  apigw_id = aws_api_gateway_rest_api.this.id
+  apigw_resource_id = aws_api_gateway_rest_api.this.root_resource_id
+  path = "events"
 }
 
 # Create event resource
 module "create_event" {
   source = "./modules/httpmethod"
   apigw_id = aws_api_gateway_rest_api.this.id
-  apigw_resource_id = aws_api_gateway_resource.path_event.id
+  apigw_resource_id = module.path_events.id
   http_method = "POST"
   lambda_arn = aws_lambda_function.lambda_eventAdmin.invoke_arn
   authorization = "COGNITO_USER_POOLS"

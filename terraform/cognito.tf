@@ -47,7 +47,7 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   supported_identity_providers         = ["COGNITO", "Google"]
   callback_urls                        = ["https://${var.webapp_subdomain}.${var.domain_name}"]
-  logout_urls                          = ["http://${var.webapp_subdomain}.${var.domain_name}"]
+  logout_urls                          = ["https://${var.webapp_subdomain}.${var.domain_name}"]
 
   write_attributes = [
     "email",
