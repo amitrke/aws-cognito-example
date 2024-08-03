@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Hub } from 'aws-amplify/utils';
 import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +11,10 @@ import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 export class AppComponent {
   title = 'webapp';
 
-  ngOnInit() {
-    Hub.listen('auth', async (data) => {
-      console.log(data)
-      if (data.payload.event === 'signedIn') {
-        const { username, userId, signInDetails } = await getCurrentUser();
-        console.log("username", username);
-        console.log("user id", userId);
-        console.log("sign-in details", signInDetails);
+  constructor(private authService: AuthService) {}
 
-        const session = await fetchAuthSession();
-        console.log("session", session);
-      }
-    });
+  async ngOnInit() {
+    const session = await fetchAuthSession();
+    console.log("id token", session.tokens?.idToken?.toString());
   }
 }
