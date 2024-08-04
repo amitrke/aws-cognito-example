@@ -35,3 +35,35 @@
         </form>
     </mat-card-content>
 </mat-card>
+
+<!-- 
+Display the list of events in a mat-card with the following fields
+    1. Event Name
+    2. Event Date
+    3. Event Location
+    4. Event Description
+    5. Event Time
+ -->
+
+<h1>Events</h1>
+<div class="events-container">
+    @for (event of events; track event) {
+    <mat-card class="events-card" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>{{event.name}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p>Date: {{event.date}}</p>
+            <p>Location: {{event.location}}</p>
+            <p>Description: {{event.description}}</p>
+            <p>Time: {{event.time}}</p>
+        </mat-card-content>
+        <mat-card-footer class="events-card-footer">
+            20 attendees
+            <mat-chip-set aria-label="Chihuahua traits">
+            <mat-chip>Register</mat-chip>
+            </mat-chip-set>
+        </mat-card-footer>
+    </mat-card>
+    }   
+</div>

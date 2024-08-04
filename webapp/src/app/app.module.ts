@@ -20,6 +20,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { MatListModule } from '@angular/material/list';
+import { MatLineModule } from '@angular/material/core';
+import { MatChipsModule } from '@angular/material/chips';
 
 Amplify.configure(awsconfig);
 
@@ -42,7 +45,10 @@ Amplify.configure(awsconfig);
     MatNativeDateModule,
     MatInputModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    MatListModule,
+    MatLineModule,
+    MatChipsModule
   ],
   providers: [
     provideAnimationsAsync(),

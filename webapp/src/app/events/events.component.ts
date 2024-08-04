@@ -30,6 +30,8 @@ export class EventsComponent {
 
   private apiToken = '';
 
+  events: Event[] = [];
+
   constructor(
     private eventsService: EventsService,
     private authService: AuthService
@@ -37,6 +39,14 @@ export class EventsComponent {
 
   async ngOnInit() {
     this.apiToken = (await this.authService.getIDToken()) || '';
+    this.eventsService.getEvents(this.apiToken).subscribe(
+      response => {
+        this.events = this.transformGetResponse(response);
+      },
+      error => {
+        console.error(error);
+      }
+    );
   }
 
   onSubmit() {
@@ -50,6 +60,20 @@ export class EventsComponent {
       }
     );
     console.log(this.eventForm.value);
+  }
+
+  transformGetResponse(response: any): Event[] {
+    const events: Event[] = [];
+    for (let event of response) {
+      events.push({
+        name: event.data.name,
+        date: event.data.date,
+        time: event.data.time,
+        location: event.data.location,
+        description: event.data.description
+      });
+    }
+    return events;
   }
 
   eventTransform(): Event {

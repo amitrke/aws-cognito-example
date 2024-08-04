@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +13,15 @@ export class EventsService {
   ) { }
 
   saveEvent(event: Event, apiToken: string) {
-    console.log('apiToken', apiToken);
     return this.http.post(this.apiUrl, event, {
+      headers: {
+        Authorization: `Bearer ${apiToken}`
+      }
+    });
+  }
+
+  getEvents(apiToken: string) {
+    return this.http.get(this.apiUrl, {
       headers: {
         Authorization: `Bearer ${apiToken}`
       }
