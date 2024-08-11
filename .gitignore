@@ -34,3 +34,6 @@ override.tf.json
 terraform.rc
 *.lock.hcl
 *.ps1
+
+# Ignore Python env
+.env/
