@@ -103,8 +103,65 @@ resource "aws_cognito_identity_pool" "this" {
   cognito_identity_providers {
     client_id               = aws_cognito_user_pool_client.client.id
     provider_name           = "cognito-idp.${var.region}.amazonaws.com/${aws_cognito_user_pool.this.id}"
-    server_side_token_check = false
+    server_side_token_check = true
   }
+
+  # roles = {
+  #   authenticated = aws_iam_role.cognito_authenticated.arn
+  # }
+}
+
+resource "aws_cognito_identity_pool_roles_attachment" "google" {
+  identity_pool_id = aws_cognito_identity_pool.this.id
+
+  roles = {
+    authenticated = aws_iam_role.cognito_authenticated.arn
+    # unauthenticated = aws_iam_role.cognito_unauthenticated.arn
+  }
+}
+
+resource "aws_iam_role" "cognito_authenticated" {
+  name = "${var.app_name}-cognito-authenticated"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = "cognito-identity.amazonaws.com"
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          "StringEquals" = {
+            "cognito-identity.amazonaws.com:aud" = aws_cognito_identity_pool.this.id
+          }
+          "ForAnyValue:StringLike" = {
+            "cognito-identity.amazonaws.com:amr" = "authenticated"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "cognito_authenticated_policy" {
+  name = "${var.app_name}-cognito-authenticated-policy"
+  role = aws_iam_role.cognito_authenticated.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "mobileanalytics:PutEvents",
+          "cognito-sync:*",
+          "cognito-identity:*"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 output "user_pool_id" {
